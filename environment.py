@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 class Environment:
 
     def __init__(self, feature_df, window_size=30):
@@ -140,8 +141,9 @@ class Environment:
         return ndarray_obv
 
     def _future_price_fmt(self, future_obv):
-        idx = pd.IndexSlice
 
-        ndarray_fp = future_obv.ix[1, idx[:, 'close']] / future_obv.ix[0, idx[:, 'close']]
+        idx = pd.IndexSlice
+        future_obv.loc[future_obv.index[1], idx[:, 'close']]
+        ndarray_fp = future_obv.loc[future_obv.index[1], idx[:, 'close']] / future_obv.loc[future_obv.index[0], idx[:, 'close']]
         ndarray_fp = ndarray_fp.values
         return ndarray_fp

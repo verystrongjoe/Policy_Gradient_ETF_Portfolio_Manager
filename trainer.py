@@ -8,7 +8,9 @@ import simulator
 import visualizer
 import train_assistant
 
-tf.set_random_seed(1531)
+# tf.set_random_seed(1531)
+tf.compat.v1.set_random_seed(153)
+
 
 def train_and_test(pg_agent, train_env, val_env, test_env, batch_size, episode, mkt_pv_vec):
 

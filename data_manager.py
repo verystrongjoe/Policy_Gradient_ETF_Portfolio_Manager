@@ -65,11 +65,18 @@ class Data_Manager:
 
         for asset in self.asset_list:
 
-            # open_lastclose_ratio : (open - close(-1))/close(-1)
+            asset_open = feature_df.columns.get_loc((asset, 'open'))
+            asset_close = feature_df.columns.get_loc((asset, 'close'))
+            asset_high = feature_df.columns.get_loc((asset, 'high'))
+            asset_low = feature_df.columns.get_loc((asset, 'low'))
+            asset_volume = feature_df.columns.get_loc((asset, 'volume'))
+
             feature_df.loc[:, (asset, 'open_lastclose_ratio')] = np.zeros(len(feature_df))
-            feature_df.ix[1:, (asset, 'open_lastclose_ratio')] = \
-                (feature_df.ix[1:, (asset, 'open')].values - feature_df.ix[:-1, (asset, 'close')].values) / \
-                feature_df.ix[:-1, (asset, 'close')].values
+            assset_open_lastclose_ratio = feature_df.columns.get_loc((asset, 'open_lastclose_ratio'))
+
+            feature_df.iloc[1:, assset_open_lastclose_ratio] = \
+                (feature_df.iloc[1:, asset_open].values - feature_df.iloc[:-1, asset_open].values) / \
+                feature_df.iloc[:-1, asset_close].values
 
             # high_close_ratio : (high - close) / close
             feature_df.loc[:, (asset, 'high_close_ratio')] = \
@@ -83,16 +90,18 @@ class Data_Manager:
 
             # (close - close(-1)) / (close(-1)
             feature_df.loc[:, (asset, 'close_lastclose_ratio')] = np.zeros(len(feature_df))
-            feature_df.ix[1:, (asset, 'close_lastclose_ratio')] = \
-                (feature_df.ix[1:, (asset, 'close')].values - feature_df.ix[:-1, (asset, 'close')].values) / \
-                feature_df.ix[:-1, (asset, 'close')].values
+            assset_close_lastclose_ratio = feature_df.columns.get_loc((asset, 'close_lastclose_ratio'))
+            feature_df.iloc[1:, assset_close_lastclose_ratio] = \
+                (feature_df.iloc[1:, asset_close].values - feature_df.iloc[:-1, asset_close].values) / \
+                feature_df.iloc[:-1, asset_close].values
 
             # (volume - volume(-1)) / (volume(-1))
             feature_df.loc[:, (asset, 'volume_lastvolume_ratio')] = np.zeros(len(feature_df))
-            feature_df.loc[1:, (asset, 'volume_lastvolume_ratio')] = \
-                (feature_df.ix[1:, (asset, 'volume')].values - feature_df.ix[:-1, (asset, 'volume')].values) / \
-                feature_df.ix[:-1, (asset, 'volume')]\
-                    .replace(to_replace=0, method='ffill').replace(to_replace=0, method='bfill').values
+            assset_volume_lastvolume_ratio = feature_df.columns.get_loc((asset, 'volume_lastvolume_ratio'))
+
+            feature_df.iloc[1:, assset_volume_lastvolume_ratio] = \
+                (feature_df.iloc[1:, asset_volume].values - feature_df.iloc[:-1, asset_volume].values) / \
+                feature_df.iloc[:-1, asset_volume].replace(to_replace=0, method='ffill').replace(to_replace=0, method='bfill').values
 
         df = feature_df.sort_index(axis=1)
 

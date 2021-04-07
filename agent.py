@@ -31,17 +31,6 @@ class Agent:
             print(conv1)
         conv1 = tf.layers.dropout(conv1, rate=0.5, noise_shape=[self.batch_size, nb_asset, (window_size-3+1)//2, 128], training=self.is_training)
 
-        # conv1 = tf.transpose(conv1, [0, 2, 1, 3])
-        # print(conv1)
-        # conv1 = tf.reshape(conv1, [-1, window_size-3+1, 15 * 128])
-
-        # cells = [tf.contrib.rnn.GRUCell(128) for _ in range(2)]
-        # cells = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
-        #
-        # rnn_out, _states = tf.nn.dynamic_rnn(cells, conv1, dtype=tf.float32)
-        #
-        # print(rnn_out)
-
         with tf.name_scope("Conv2"):
             conv2 = tf.layers.conv2d(conv1, filters=64, kernel_size=[1, (window_size-3+1)//2], strides=[1, 1],
                                      kernel_initializer=tf.contrib.layers.xavier_initializer(),
@@ -53,17 +42,11 @@ class Agent:
             conv3 = tf.layers.conv2d(conv2, filters=1, kernel_size=[1, 1], strides=[1, 1],
                                      kernel_initializer=tf.contrib.layers.xavier_initializer())
 
-        # conv2_flatten = tf.contrib.layers.flatten(rnn_out)
-        # print(conv2_flatten)
-
-        # logits = tf.contrib.layers.fully_connected(conv2_flatten, action_shape[1],
-        #                                            activation_fn=None)
         conv3 = tf.contrib.layers.flatten(conv3)
 
         # Action (portfolio weight vector)
         self.action = tf.nn.softmax(conv3, name='action')
         print(self.action)
-
 
         self.mean_action = 1 / nb_asset
         print(self.mean_action)
@@ -101,7 +84,7 @@ class Agent:
         # self.loss = -self.sharpe_ratio
         # self.reward = self.information_ratio - 0.1 * self.mean_std_action
         # self.reward = self.information_ratio
-        self.reward = self.mean_log_pv_mkt_diff
+        self.reward = self. mean_log_pv_mkt_diff
         # self.reward = self.sharpe_ratio
         self.train_op = tf.train.AdamOptimizer(learning_rate=lr).minimize(-self.reward)
         # self.train_op = tf.train.AdagradOptimizer(learning_rate=lr).minimize(-self.reward)
@@ -119,8 +102,7 @@ class Agent:
             self.future_price: future_price_b,
             self.is_training: is_train,
             self.batch_size: len(obs_b),
-            self.global_step: self._global_step
-        }
+            self.global_step: self._global_step        }
 
         if is_train:
             self._global_step += 1
